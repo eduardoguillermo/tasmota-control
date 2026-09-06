@@ -1,4 +1,4 @@
-const CACHE_NAME = "tasmota-control-v1.0.0";
+const CACHE_NAME = "tasmota-control-v1.1.0";
 const ASSETS = [
   "./",
   "./index.html",
