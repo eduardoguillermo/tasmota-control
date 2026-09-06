@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0f11">
+<title>Tasmota Control</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0f11;
+  --surface:#16191c;
+  --surface2:#1d2124;
+  --border:#2a2e33;
+  --on:#e8a33d;
+  --on-dim:#4a3a20;
+  --off:#3a3f44;
+  --text:#e8e6e1;
+  --text-dim:#8b9096;
+  --danger:#c85a4a;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--text);
+  font-family:'JetBrains Mono',monospace; overscroll-behavior:none;}
+
+/* ---------- SPLASH ---------- */
+#splash{position:fixed;inset:0;background:var(--bg);z-index:999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:24px;cursor:pointer;}
+#splash h1{font-size:2.1rem;letter-spacing:1px;margin:0 0 8px;color:var(--on);font-weight:700;}
+#splash p{color:var(--text-dim);margin:0;font-size:0.95rem;}
+#splash .hint{margin-top:40px;font-size:0.75rem;color:var(--text-dim);opacity:0.6;}
+#splash footer{position:absolute;bottom:14px;left:0;right:0;font-size:0.7rem;color:var(--text-dim);}
+#splash .dev{font-family:'Dancing Script',cursive;font-size:1.1rem;color:var(--on);margin-top:2px;}
+
+/* ---------- APP ---------- */
+#app{display:none; min-height:100%; flex-direction:column;}
+header.top{padding:18px 16px 12px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;}
+header.top h2{margin:0;font-size:1.05rem;font-weight:700;color:var(--on);}
+header.top .sub{font-size:0.7rem;color:var(--text-dim);margin-top:2px;}
+#salirBtn{background:none;border:1px solid var(--border);color:var(--text-dim);
+  border-radius:8px;padding:8px 10px;font-family:inherit;font-size:0.75rem;cursor:pointer;}
+#salirBtn:active{background:var(--surface2);}
+
+main{flex:1; padding:14px 14px 100px; display:flex; flex-direction:column; gap:12px;}
+
+.device{background:var(--surface); border:1px solid var(--border); border-radius:10px;
+  padding:14px; display:flex; align-items:center; gap:12px;}
+.device .info{flex:1; min-width:0;}
+.device .name{font-weight:700; font-size:0.95rem; color:var(--text); white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis;}
+.device .ip{font-size:0.72rem; color:var(--text-dim); margin-top:2px;}
+.device .status{font-size:0.68rem; margin-top:4px; letter-spacing:0.5px;}
+.status.on{color:var(--on);}
+.status.off{color:var(--text-dim);}
+.status.err{color:var(--danger);}
+
+/* relay-style rocker switch */
+.rocker{position:relative; width:52px; height:30px; border-radius:6px;
+  background:var(--off); border:1px solid var(--border); flex-shrink:0; cursor:pointer;
+  transition:background .15s;}
+.rocker.on{background:var(--on-dim); border-color:var(--on);}
+.rocker .bar{position:absolute; top:3px; bottom:3px; width:22px; border-radius:4px;
+  background:var(--text-dim); left:3px; transition:left .15s, background .15s;}
+.rocker.on .bar{left:27px; background:var(--on);}
+.rocker.loading .bar{opacity:0.4;}
+
+.device .menuBtn{background:none;border:none;color:var(--text-dim);font-size:1.1rem;
+  cursor:pointer; padding:4px 6px;}
+
+.empty{color:var(--text-dim); text-align:center; margin-top:60px; font-size:0.85rem; line-height:1.6;}
+
+/* add form */
+#fab{position:fixed; right:18px; bottom:24px; width:56px; height:56px; border-radius:50%;
+  background:var(--on); color:var(--bg); border:none; font-size:1.6rem; font-weight:700;
+  cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,0.4); z-index:20;}
+
+#overlay{position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:30; display:none;
+  align-items:flex-end;}
+#sheet{background:var(--surface); width:100%; border-radius:16px 16px 0 0; padding:20px;
+  border-top:1px solid var(--border);}
+#sheet h3{margin:0 0 14px; font-size:1rem; color:var(--on);}
+#sheet label{display:block; font-size:0.72rem; color:var(--text-dim); margin:12px 0 4px;}
+#sheet input{width:100%; background:var(--surface2); border:1px solid var(--border);
+  color:var(--text); padding:10px; border-radius:8px; font-family:inherit; font-size:0.9rem;}
+#sheet .row{display:flex; gap:10px; margin-top:20px;}
+#sheet button{flex:1; padding:12px; border-radius:8px; border:none; font-family:inherit;
+  font-weight:700; font-size:0.85rem; cursor:pointer;}
+#saveDevice{background:var(--on); color:var(--bg);}
+#cancelDevice{background:var(--surface2); color:var(--text-dim); border:1px solid var(--border) !important;}
+#deleteDevice{background:none; color:var(--danger); border:1px solid var(--danger) !important;
+  display:none; margin-top:10px; width:100%;}
+
+.toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+  background:var(--surface2); border:1px solid var(--border); color:var(--text);
+  padding:10px 18px; border-radius:20px; font-size:0.78rem; z-index:50; opacity:0;
+  transition:opacity .2s; pointer-events:none;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <h1>TASMOTA CONTROL</h1>
+  <p>Control de dispositivos WiFi en tu red local</p>
+  <div class="hint">Tocá la pantalla o presioná Enter</div>
+  <footer>
+    <div id="splashFooter">tasmota-control · — · —:—· v0.0.0</div>
+    <div class="dev">Development by Guille</div>
+  </footer>
+</div>
+
+<div id="app">
+  <header class="top">
+    <div>
+      <h2>Tasmota Control</h2>
+      <div class="sub" id="deviceCount">0 dispositivos</div>
+    </div>
+    <button id="salirBtn">🚪 Salir</button>
+  </header>
+
+  <main>
+    <div id="list"></div>
+    <div class="empty" id="emptyMsg" style="display:none;">
+      No hay dispositivos cargados.<br>Tocá el botón + para agregar el primero.
+    </div>
+  </main>
+
+  <button id="fab">+</button>
+</div>
+
+<div id="overlay">
+  <div id="sheet">
+    <h3 id="sheetTitle">Nuevo dispositivo</h3>
+    <label>Nombre</label>
+    <input id="fName" placeholder="Ej: Luz garage" autocomplete="off">
+    <label>IP local</label>
+    <input id="fIp" placeholder="Ej: 192.168.1.50" autocomplete="off" inputmode="decimal">
+    <label>Usuario (opcional)</label>
+    <input id="fUser" placeholder="Solo si tiene autenticación" autocomplete="off">
+    <label>Contraseña (opcional)</label>
+    <input id="fPass" placeholder="Solo si tiene autenticación" type="password" autocomplete="off">
+    <div class="row">
+      <button id="cancelDevice">Cancelar</button>
+      <button id="saveDevice">Guardar</button>
+    </div>
+    <button id="deleteDevice">Eliminar dispositivo</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
