@@ -36,9 +36,9 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);
   font-family:'JetBrains Mono',monospace; overscroll-behavior:none;
   background-color:var(--bg);
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(232,163,61,0.12) 1px, transparent 1px),
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    radial-gradient(circle at 1px 1px, rgba(232,163,61,0.28) 1.5px, transparent 1.5px),
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
   background-size:78px 78px, 26px 26px, 26px 26px;
   background-position:0 0, 0 0, 0 0;
 }
@@ -62,12 +62,12 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);
 header.top{position:relative; padding:16px; border-bottom:1px solid var(--border);
   display:flex; align-items:center; justify-content:space-between;
   background:linear-gradient(180deg, var(--panel2), var(--bg)); overflow:hidden;}
-header.top::after{content:""; position:absolute; left:-30%; top:0; width:30%; height:2px;
+header.top::after{content:""; position:absolute; left:-30%; top:0; width:30%; height:3px;
   background:linear-gradient(90deg, transparent, var(--on), transparent);
-  animation:scan 3.5s linear infinite; opacity:0.7;}
+  animation:scan 3.5s linear infinite; opacity:1; box-shadow:0 0 8px var(--on-glow);}
 @keyframes scan{ 0%{left:-30%;} 100%{left:100%;} }
-header.top .clock{font-size:0.62rem; color:var(--text-faint); letter-spacing:1px; margin-top:2px;}
-header.top .clock .amber{color:var(--on); opacity:0.85;}
+header.top .clock{font-size:0.75rem; color:var(--text); letter-spacing:1.5px; margin-top:3px; font-weight:700;}
+header.top .clock .amber{color:var(--on);}
 header.top h2{margin:0;font-size:1rem;font-weight:800;color:var(--text);
   letter-spacing:2px; text-transform:uppercase;}
 header.top h2 .sep{color:var(--text-faint); font-weight:400; margin:0 2px;}
