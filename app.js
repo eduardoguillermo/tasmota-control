@@ -1,4 +1,4 @@
-const APP_VERSION = "1.2.0";
+const APP_VERSION = "1.3.0";
 const STORAGE_KEY = "tasmota_devices";
 const BACKUPS_KEY = "tasmota_backups";
 const MAX_BACKUPS = 10;
@@ -141,6 +141,7 @@ function renderList(){
 
     const channelsHtml = dev.channels.map((ch, i)=>`
       <div class="channel-row" data-ch="${i}">
+        <div class="led" data-role="led"></div>
         <div class="info">
           <div class="chname">${escapeHtml(ch.name)}</div>
           <div class="status" data-role="status">sin comandos enviados</div>
@@ -156,10 +157,10 @@ function renderList(){
       <div class="devHead">
         <div>
           <span class="name">${escapeHtml(dev.name)}</span>
-          <span class="ip"> · ${escapeHtml(dev.ip)}</span>
+          <span class="ip">${escapeHtml(dev.ip)}</span>
         </div>
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span class="reach unknown" data-role="reach">verificando...</span>
+        <div class="right">
+          <span class="reach unknown" data-role="reach"><span class="rdot"></span><span data-role="reachtext">verificando</span></span>
           <button class="editBtn" data-role="edit">✎</button>
         </div>
       </div>
@@ -187,9 +188,11 @@ function renderChannel(dev, channelIndex){
   const status = el.querySelector('[data-role="status"]');
   const onBtn = el.querySelector('[data-role="on"]');
   const offBtn = el.querySelector('[data-role="off"]');
+  const led = el.querySelector('[data-role="led"]');
 
   onBtn.classList.toggle("active", ch.lastCmd === "On");
   offBtn.classList.toggle("active", ch.lastCmd === "Off");
+  led.classList.toggle("on", ch.lastCmd === "On");
 
   if(ch.lastCmd){
     status.textContent = `${ch.lastCmd === "On" ? "Encendido" : "Apagado"} (asumido) · ${timeAgo(ch.lastCmdTime)}`;
@@ -202,16 +205,36 @@ function renderChannel(dev, channelIndex){
 function renderReach(dev){
   const el = document.querySelector(`.device[data-id="${dev.id}"] [data-role="reach"]`);
   if(!el) return;
+  const textEl = el.querySelector('[data-role="reachtext"]');
   if(dev._reachable === true){
-    el.textContent = "conectado";
+    textEl.textContent = "online";
     el.className = "reach ok";
   } else if(dev._reachable === false){
-    el.textContent = "sin respuesta";
+    textEl.textContent = "sin respuesta";
     el.className = "reach bad";
   } else {
-    el.textContent = "verificando...";
+    textEl.textContent = "verificando";
     el.className = "reach unknown";
   }
+  updateSystemBar();
+}
+function updateSystemBar(){
+  const dot = document.getElementById("sysDot");
+  const text = document.getElementById("sysText");
+  if(!dot || !text || devices.length === 0){
+    if(text) text.textContent = "sin dispositivos cargados";
+    if(dot) dot.className = "dot";
+    return;
+  }
+  const known = devices.filter(d=>d._reachable !== undefined);
+  const online = devices.filter(d=>d._reachable === true).length;
+  if(known.length < devices.length){
+    dot.className = "dot";
+    text.textContent = `verificando red... (${known.length}/${devices.length})`;
+    return;
+  }
+  dot.className = "dot " + (online === devices.length ? "ok" : (online === 0 ? "bad" : "ok"));
+  text.textContent = `${online}/${devices.length} dispositivos en línea`;
 }
 
 // ---------- sheet (add/edit) ----------
