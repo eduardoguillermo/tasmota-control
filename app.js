@@ -1,4 +1,4 @@
-const APP_VERSION = "1.3.1";
+const APP_VERSION = "1.4.0";
 const STORAGE_KEY = "tasmota_devices";
 const BACKUPS_KEY = "tasmota_backups";
 const MAX_BACKUPS = 10;
@@ -143,7 +143,10 @@ function renderList(){
       <div class="channel-row" data-ch="${i}">
         <div class="led" data-role="led"></div>
         <div class="info">
-          <div class="chname">${escapeHtml(ch.name)}</div>
+          <div class="chtitle">
+            <span class="chtag">CH${String(i+1).padStart(2,"0")}</span>
+            <span class="chname">${escapeHtml(ch.name)}</span>
+          </div>
           <div class="status" data-role="status">sin comandos enviados</div>
         </div>
         <div class="state-btns" data-id="${dev.id}" data-ch="${i}">
@@ -321,6 +324,12 @@ function updateSplashFooter(){
   document.getElementById("splashFooter").textContent =
     `tasmota-control · ${date} · ${time} · v${APP_VERSION}`;
 }
+function updateLiveClock(){
+  const el = document.getElementById("liveClock");
+  if(!el) return;
+  const d = new Date();
+  el.innerHTML = `${pad(d.getHours())}:${pad(d.getMinutes())}:<span class="amber">${pad(d.getSeconds())}</span>`;
+}
 function closeSplash(){
   document.getElementById("splash").style.display = "none";
   document.getElementById("app").style.display = "flex";
@@ -348,6 +357,8 @@ function doSalir(){
 document.addEventListener("DOMContentLoaded", ()=>{
   updateSplashFooter();
   setInterval(updateSplashFooter, 30000);
+  updateLiveClock();
+  setInterval(updateLiveClock, 1000);
 
   const splash = document.getElementById("splash");
   splash.addEventListener("click", closeSplash);
