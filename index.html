@@ -49,16 +49,21 @@ header.top .sub{font-size:0.7rem;color:var(--text-dim);margin-top:2px;}
 main{flex:1; padding:14px 14px 100px; display:flex; flex-direction:column; gap:12px;}
 
 .device{background:var(--surface); border:1px solid var(--border); border-radius:10px;
-  padding:14px; display:flex; align-items:center; gap:12px;}
-.device .info{flex:1; min-width:0;}
-.device .name{font-weight:700; font-size:0.95rem; color:var(--text); white-space:nowrap;
+  padding:14px;}
+.device .devHead{display:flex; align-items:baseline; justify-content:space-between; gap:8px;
+  padding-bottom:8px; margin-bottom:8px; border-bottom:1px solid var(--border);}
+.device .devHead .name{font-weight:700; font-size:0.95rem; color:var(--text); white-space:nowrap;
   overflow:hidden; text-overflow:ellipsis;}
-.device .ip{font-size:0.72rem; color:var(--text-dim); margin-top:2px;}
-.device .status{font-size:0.68rem; margin-top:4px; letter-spacing:0.5px;}
+.device .devHead .ip{font-size:0.68rem; color:var(--text-dim);}
+.channel-row{display:flex; align-items:center; gap:12px; padding:6px 0;}
+.channel-row + .channel-row{border-top:1px dashed var(--border);}
+.channel-row .info{flex:1; min-width:0;}
+.channel-row .chname{font-weight:600; font-size:0.85rem; color:var(--text);}
+.channel-row .status{font-size:0.68rem; margin-top:2px; letter-spacing:0.5px;}
 .status.on{color:var(--on);}
 .status.off{color:var(--text-dim);}
 .status.err{color:var(--danger);}
-.device .reach{font-size:0.62rem; margin-top:2px;}
+.devHead .reach{font-size:0.62rem;}
 .reach.ok{color:#5a9d6b;}
 .reach.bad{color:var(--danger);}
 .reach.unknown{color:var(--text-dim);}
@@ -72,8 +77,8 @@ main{flex:1; padding:14px 14px 100px; display:flex; flex-direction:column; gap:1
 .state-btn.on-btn.active{background:var(--on-dim); border-color:var(--on); color:var(--on);}
 .state-btn.off-btn.active{background:var(--surface2); border-color:var(--text-dim); color:var(--text);}
 
-.device .menuBtn{background:none;border:none;color:var(--text-dim);font-size:1.1rem;
-  cursor:pointer; padding:4px 6px;}
+.devHead .editBtn{background:none;border:none;color:var(--text-dim);font-size:1.1rem;
+  cursor:pointer; padding:2px 4px;}
 
 .empty{color:var(--text-dim); text-align:center; margin-top:60px; font-size:0.85rem; line-height:1.6;}
 
@@ -91,6 +96,8 @@ main{flex:1; padding:14px 14px 100px; display:flex; flex-direction:column; gap:1
 #sheet input{width:100%; background:var(--surface2); border:1px solid var(--border);
   color:var(--text); padding:10px; border-radius:8px; font-family:inherit; font-size:0.9rem;}
 #sheet .row{display:flex; gap:10px; margin-top:20px;}
+#channelNamesContainer label{margin-top:10px;}
+#channelNamesContainer input{margin-bottom:2px;}
 #sheet button{flex:1; padding:12px; border-radius:8px; border:none; font-family:inherit;
   font-weight:700; font-size:0.85rem; cursor:pointer;}
 #saveDevice{background:var(--on); color:var(--bg);}
@@ -143,6 +150,9 @@ main{flex:1; padding:14px 14px 100px; display:flex; flex-direction:column; gap:1
     <input id="fName" placeholder="Ej: Luz garage" autocomplete="off">
     <label>IP local</label>
     <input id="fIp" placeholder="Ej: 192.168.1.50" autocomplete="off" inputmode="decimal">
+    <label>Cantidad de relés</label>
+    <input id="fRelayCount" type="number" min="1" max="8" value="1" inputmode="numeric">
+    <div id="channelNamesContainer"></div>
     <label>Usuario (opcional)</label>
     <input id="fUser" placeholder="Solo si tiene autenticación" autocomplete="off">
     <label>Contraseña (opcional)</label>
