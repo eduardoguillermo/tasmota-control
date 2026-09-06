@@ -36,9 +36,11 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);
   font-family:'JetBrains Mono',monospace; overscroll-behavior:none;
   background-color:var(--bg);
   background-image:
-    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-  background-size:26px 26px;
+    radial-gradient(circle at 1px 1px, rgba(232,163,61,0.12) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size:78px 78px, 26px 26px, 26px 26px;
+  background-position:0 0, 0 0, 0 0;
 }
 
 /* ---------- SPLASH ---------- */
@@ -50,14 +52,22 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);
 #splash p{color:var(--text-dim);margin:0;font-size:0.9rem;}
 #splash .hint{margin-top:40px;font-size:0.7rem;color:var(--text-faint);letter-spacing:1px;
   text-transform:uppercase;}
+#splash .hint::after{content:"_"; animation:blink 1s step-end infinite;}
+@keyframes blink{ 50%{opacity:0;} }
 #splash footer{position:absolute;bottom:14px;left:0;right:0;font-size:0.68rem;color:var(--text-faint);}
 #splash .dev{font-family:'Dancing Script',cursive;font-size:1.1rem;color:var(--on);margin-top:2px;}
 
 /* ---------- APP ---------- */
 #app{display:none; min-height:100%; flex-direction:column;}
-header.top{padding:16px; border-bottom:1px solid var(--border);
+header.top{position:relative; padding:16px; border-bottom:1px solid var(--border);
   display:flex; align-items:center; justify-content:space-between;
-  background:linear-gradient(180deg, var(--panel2), var(--bg));}
+  background:linear-gradient(180deg, var(--panel2), var(--bg)); overflow:hidden;}
+header.top::after{content:""; position:absolute; left:-30%; top:0; width:30%; height:2px;
+  background:linear-gradient(90deg, transparent, var(--on), transparent);
+  animation:scan 3.5s linear infinite; opacity:0.7;}
+@keyframes scan{ 0%{left:-30%;} 100%{left:100%;} }
+header.top .clock{font-size:0.62rem; color:var(--text-faint); letter-spacing:1px; margin-top:2px;}
+header.top .clock .amber{color:var(--on); opacity:0.85;}
 header.top h2{margin:0;font-size:1rem;font-weight:800;color:var(--text);
   letter-spacing:2px; text-transform:uppercase;}
 header.top h2 .sep{color:var(--text-faint); font-weight:400; margin:0 2px;}
@@ -118,6 +128,9 @@ main{flex:1; padding:14px 14px 100px; display:flex; flex-direction:column; gap:1
   flex-shrink:0; transition:background .2s, box-shadow .2s;}
 .channel-row .led.on{background:var(--live); box-shadow:0 0 9px var(--live-glow);}
 .channel-row .info{flex:1; min-width:0;}
+.channel-row .chtitle{display:flex; align-items:center; gap:6px;}
+.channel-row .chtag{font-size:0.6rem; color:var(--text-faint); border:1px solid var(--border);
+  border-radius:3px; padding:1px 5px; letter-spacing:0.5px; flex-shrink:0;}
 .channel-row .chname{font-weight:600; font-size:0.82rem; color:var(--text);}
 .channel-row .status{font-size:0.63rem; margin-top:2px; letter-spacing:0.3px; color:var(--text-faint);}
 .status.on{color:var(--on);}
@@ -186,6 +199,7 @@ main{flex:1; padding:14px 14px 100px; display:flex; flex-direction:column; gap:1
   <header class="top">
     <div>
       <h2>TASMOTA<span class="sep">::</span><span class="amber">CONTROL</span></h2>
+      <div class="clock" id="liveClock">--:--:--</div>
       <div class="sub" id="deviceCount">0 dispositivos</div>
     </div>
     <button id="salirBtn">🚪 Salir</button>
