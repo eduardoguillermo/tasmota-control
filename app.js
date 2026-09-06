@@ -1,4 +1,4 @@
-const APP_VERSION = "1.4.0";
+const APP_VERSION = "1.4.1";
 const STORAGE_KEY = "tasmota_devices";
 const BACKUPS_KEY = "tasmota_backups";
 const MAX_BACKUPS = 10;
@@ -379,6 +379,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
   });
 
   if("serviceWorker" in navigator){
-    navigator.serviceWorker.register("sw.js").catch(()=>{});
+    navigator.serviceWorker.register("sw.js", { updateViaCache: "none" })
+      .then(reg => reg.update())
+      .catch(()=>{});
   }
 });
