@@ -20,6 +20,8 @@
   --on:#e8a33d;
   --on-glow:rgba(232,163,61,0.55);
   --on-dim:#3a2f1c;
+  --live:#e5473f;
+  --live-glow:rgba(229,71,63,0.6);
   --ok:#4fae6b;
   --ok-glow:rgba(79,174,107,0.55);
   --off:#3a3f44;
@@ -58,6 +60,7 @@ header.top{padding:16px; border-bottom:1px solid var(--border);
   background:linear-gradient(180deg, var(--panel2), var(--bg));}
 header.top h2{margin:0;font-size:1rem;font-weight:800;color:var(--text);
   letter-spacing:2px; text-transform:uppercase;}
+header.top h2 .sep{color:var(--text-faint); font-weight:400; margin:0 2px;}
 header.top h2 .amber{color:var(--on);}
 header.top .sub{font-size:0.65rem;color:var(--text-faint);margin-top:3px;letter-spacing:0.5px;}
 #salirBtn{background:var(--panel);border:1px solid var(--border);color:var(--text-dim);
@@ -82,15 +85,21 @@ main{flex:1; padding:14px 14px 100px; display:flex; flex-direction:column; gap:1
 .device{position:relative; background:var(--panel); border:1px solid var(--border);
   border-radius:10px; padding:14px 16px 10px; box-shadow:0 1px 0 rgba(255,255,255,0.03) inset,
   0 6px 14px rgba(0,0,0,0.25);}
-.device::before, .device::after{content:""; position:absolute; top:7px; width:4px; height:4px;
-  border-radius:50%; background:var(--border-lit);}
-.device::before{left:7px;} .device::after{right:7px;}
+.device::before, .device::after{content:""; position:absolute; top:8px; width:5px; height:5px;
+  border-radius:50%; background:var(--border-lit);
+  box-shadow:0 0 0 1px var(--inset) inset, 0 1px 0 rgba(255,255,255,0.06);}
+.device::before{left:8px;} .device::after{right:8px;}
+
+@keyframes pulse-dim{ 0%,100%{opacity:0.35;} 50%{opacity:1;} }
+.devHead .reach.unknown .rdot{animation:pulse-dim 1.3s ease-in-out infinite;}
 
 .devHead{display:flex; align-items:flex-start; justify-content:space-between; gap:8px;
   padding-bottom:10px; margin-bottom:8px; border-bottom:1px solid var(--border);}
 .devHead .name{font-weight:700; font-size:0.82rem; color:var(--text); white-space:nowrap;
   overflow:hidden; text-overflow:ellipsis; letter-spacing:0.5px; text-transform:uppercase;}
-.devHead .ip{font-size:0.64rem; color:var(--text-faint); display:block; margin-top:2px;}
+.devHead .ip{font-size:0.62rem; color:var(--text-dim); display:inline-block; margin-top:4px;
+  background:var(--inset); border:1px solid var(--border); border-radius:4px; padding:1px 6px;
+  letter-spacing:0.5px;}
 .devHead .right{display:flex; align-items:center; gap:10px;}
 .devHead .reach{font-size:0.6rem; text-transform:uppercase; letter-spacing:0.5px;
   display:flex; align-items:center; gap:5px;}
@@ -107,7 +116,7 @@ main{flex:1; padding:14px 14px 100px; display:flex; flex-direction:column; gap:1
 .channel-row + .channel-row{border-top:1px dashed var(--border);}
 .channel-row .led{width:9px; height:9px; border-radius:50%; background:var(--off);
   flex-shrink:0; transition:background .2s, box-shadow .2s;}
-.channel-row .led.on{background:var(--on); box-shadow:0 0 9px var(--on-glow);}
+.channel-row .led.on{background:var(--live); box-shadow:0 0 9px var(--live-glow);}
 .channel-row .info{flex:1; min-width:0;}
 .channel-row .chname{font-weight:600; font-size:0.82rem; color:var(--text);}
 .channel-row .status{font-size:0.63rem; margin-top:2px; letter-spacing:0.3px; color:var(--text-faint);}
@@ -176,7 +185,7 @@ main{flex:1; padding:14px 14px 100px; display:flex; flex-direction:column; gap:1
 <div id="app">
   <header class="top">
     <div>
-      <h2>Tasmota <span class="amber">Control</span></h2>
+      <h2>TASMOTA<span class="sep">::</span><span class="amber">CONTROL</span></h2>
       <div class="sub" id="deviceCount">0 dispositivos</div>
     </div>
     <button id="salirBtn">🚪 Salir</button>
