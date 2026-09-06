@@ -3,111 +3,160 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0d0f11">
+<meta name="theme-color" content="#0a0c0e">
 <title>Tasmota Control</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0d0f11;
-  --surface:#16191c;
-  --surface2:#1d2124;
+  --bg:#0a0c0e;
+  --panel:#14171a;
+  --panel2:#1a1e22;
+  --inset:#0d0f11;
   --border:#2a2e33;
+  --border-lit:#3a3f45;
   --on:#e8a33d;
-  --on-dim:#4a3a20;
+  --on-glow:rgba(232,163,61,0.55);
+  --on-dim:#3a2f1c;
+  --ok:#4fae6b;
+  --ok-glow:rgba(79,174,107,0.55);
   --off:#3a3f44;
   --text:#e8e6e1;
-  --text-dim:#8b9096;
-  --danger:#c85a4a;
+  --text-dim:#7e858c;
+  --text-faint:#565b60;
+  --danger:#d6604d;
+  --danger-glow:rgba(214,96,77,0.5);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--text);
-  font-family:'JetBrains Mono',monospace; overscroll-behavior:none;}
+html,body{margin:0;padding:0;height:100%;color:var(--text);
+  font-family:'JetBrains Mono',monospace; overscroll-behavior:none;
+  background-color:var(--bg);
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size:26px 26px;
+}
 
 /* ---------- SPLASH ---------- */
 #splash{position:fixed;inset:0;background:var(--bg);z-index:999;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   text-align:center;padding:24px;cursor:pointer;}
-#splash h1{font-size:2.1rem;letter-spacing:1px;margin:0 0 8px;color:var(--on);font-weight:700;}
-#splash p{color:var(--text-dim);margin:0;font-size:0.95rem;}
-#splash .hint{margin-top:40px;font-size:0.75rem;color:var(--text-dim);opacity:0.6;}
-#splash footer{position:absolute;bottom:14px;left:0;right:0;font-size:0.7rem;color:var(--text-dim);}
+#splash h1{font-size:2rem;letter-spacing:3px;margin:0 0 8px;color:var(--on);font-weight:800;
+  text-shadow:0 0 18px var(--on-glow);}
+#splash p{color:var(--text-dim);margin:0;font-size:0.9rem;}
+#splash .hint{margin-top:40px;font-size:0.7rem;color:var(--text-faint);letter-spacing:1px;
+  text-transform:uppercase;}
+#splash footer{position:absolute;bottom:14px;left:0;right:0;font-size:0.68rem;color:var(--text-faint);}
 #splash .dev{font-family:'Dancing Script',cursive;font-size:1.1rem;color:var(--on);margin-top:2px;}
 
 /* ---------- APP ---------- */
 #app{display:none; min-height:100%; flex-direction:column;}
-header.top{padding:18px 16px 12px; border-bottom:1px solid var(--border);
-  display:flex; align-items:center; justify-content:space-between;}
-header.top h2{margin:0;font-size:1.05rem;font-weight:700;color:var(--on);}
-header.top .sub{font-size:0.7rem;color:var(--text-dim);margin-top:2px;}
-#salirBtn{background:none;border:1px solid var(--border);color:var(--text-dim);
-  border-radius:8px;padding:8px 10px;font-family:inherit;font-size:0.75rem;cursor:pointer;}
-#salirBtn:active{background:var(--surface2);}
+header.top{padding:16px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  background:linear-gradient(180deg, var(--panel2), var(--bg));}
+header.top h2{margin:0;font-size:1rem;font-weight:800;color:var(--text);
+  letter-spacing:2px; text-transform:uppercase;}
+header.top h2 .amber{color:var(--on);}
+header.top .sub{font-size:0.65rem;color:var(--text-faint);margin-top:3px;letter-spacing:0.5px;}
+#salirBtn{background:var(--panel);border:1px solid var(--border);color:var(--text-dim);
+  border-radius:6px;padding:8px 12px;font-family:inherit;font-size:0.72rem;cursor:pointer;
+  letter-spacing:0.5px;}
+#salirBtn:active{background:var(--panel2);}
+
+/* ---------- SYSTEM STATUS STRIP ---------- */
+#systemBar{margin:14px 14px 0; padding:10px 14px; background:var(--panel);
+  border:1px solid var(--border); border-radius:8px; display:flex; align-items:center;
+  gap:10px; font-size:0.68rem; letter-spacing:0.5px; color:var(--text-dim);
+  text-transform:uppercase;}
+#systemBar .dot{width:8px; height:8px; border-radius:50%; background:var(--text-faint); flex-shrink:0;}
+#systemBar .dot.ok{background:var(--ok); box-shadow:0 0 8px var(--ok-glow);}
+#systemBar .dot.bad{background:var(--danger); box-shadow:0 0 8px var(--danger-glow);}
 
 main{flex:1; padding:14px 14px 100px; display:flex; flex-direction:column; gap:12px;}
 
-.device{background:var(--surface); border:1px solid var(--border); border-radius:10px;
-  padding:14px;}
-.device .devHead{display:flex; align-items:baseline; justify-content:space-between; gap:8px;
-  padding-bottom:8px; margin-bottom:8px; border-bottom:1px solid var(--border);}
-.device .devHead .name{font-weight:700; font-size:0.95rem; color:var(--text); white-space:nowrap;
-  overflow:hidden; text-overflow:ellipsis;}
-.device .devHead .ip{font-size:0.68rem; color:var(--text-dim);}
-.channel-row{display:flex; align-items:center; gap:12px; padding:6px 0;}
-.channel-row + .channel-row{border-top:1px dashed var(--border);}
-.channel-row .info{flex:1; min-width:0;}
-.channel-row .chname{font-weight:600; font-size:0.85rem; color:var(--text);}
-.channel-row .status{font-size:0.68rem; margin-top:2px; letter-spacing:0.5px;}
-.status.on{color:var(--on);}
-.status.off{color:var(--text-dim);}
-.status.err{color:var(--danger);}
-.devHead .reach{font-size:0.62rem;}
-.reach.ok{color:#5a9d6b;}
+#list{display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:12px;}
+
+/* ---------- DEVICE PANEL ---------- */
+.device{position:relative; background:var(--panel); border:1px solid var(--border);
+  border-radius:10px; padding:14px 16px 10px; box-shadow:0 1px 0 rgba(255,255,255,0.03) inset,
+  0 6px 14px rgba(0,0,0,0.25);}
+.device::before, .device::after{content:""; position:absolute; top:7px; width:4px; height:4px;
+  border-radius:50%; background:var(--border-lit);}
+.device::before{left:7px;} .device::after{right:7px;}
+
+.devHead{display:flex; align-items:flex-start; justify-content:space-between; gap:8px;
+  padding-bottom:10px; margin-bottom:8px; border-bottom:1px solid var(--border);}
+.devHead .name{font-weight:700; font-size:0.82rem; color:var(--text); white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis; letter-spacing:0.5px; text-transform:uppercase;}
+.devHead .ip{font-size:0.64rem; color:var(--text-faint); display:block; margin-top:2px;}
+.devHead .right{display:flex; align-items:center; gap:10px;}
+.devHead .reach{font-size:0.6rem; text-transform:uppercase; letter-spacing:0.5px;
+  display:flex; align-items:center; gap:5px;}
+.devHead .reach .rdot{width:7px; height:7px; border-radius:50%; background:var(--text-faint);}
+.reach.ok .rdot{background:var(--ok); box-shadow:0 0 7px var(--ok-glow);}
+.reach.ok{color:var(--ok);}
+.reach.bad .rdot{background:var(--danger); box-shadow:0 0 7px var(--danger-glow);}
 .reach.bad{color:var(--danger);}
-.reach.unknown{color:var(--text-dim);}
-
-/* botones ON/OFF explicitos (modo no-cors: comando disparado a ciegas, sin leer respuesta) */
-.state-btns{display:flex; flex-direction:column; gap:4px; flex-shrink:0;}
-.state-btn{width:56px; padding:7px 0; border-radius:6px; border:1px solid var(--border);
-  background:var(--surface2); color:var(--text-dim); font-family:inherit; font-size:0.72rem;
-  font-weight:700; cursor:pointer; letter-spacing:0.5px; transition:background .15s, color .15s, border-color .15s;}
-.state-btn.sending{opacity:0.5;}
-.state-btn.on-btn.active{background:var(--on-dim); border-color:var(--on); color:var(--on);}
-.state-btn.off-btn.active{background:var(--surface2); border-color:var(--text-dim); color:var(--text);}
-
-.devHead .editBtn{background:none;border:none;color:var(--text-dim);font-size:1.1rem;
+.reach.unknown{color:var(--text-faint);}
+.devHead .editBtn{background:none;border:none;color:var(--text-faint);font-size:1rem;
   cursor:pointer; padding:2px 4px;}
 
-.empty{color:var(--text-dim); text-align:center; margin-top:60px; font-size:0.85rem; line-height:1.6;}
+.channel-row{display:flex; align-items:center; gap:12px; padding:8px 0;}
+.channel-row + .channel-row{border-top:1px dashed var(--border);}
+.channel-row .led{width:9px; height:9px; border-radius:50%; background:var(--off);
+  flex-shrink:0; transition:background .2s, box-shadow .2s;}
+.channel-row .led.on{background:var(--on); box-shadow:0 0 9px var(--on-glow);}
+.channel-row .info{flex:1; min-width:0;}
+.channel-row .chname{font-weight:600; font-size:0.82rem; color:var(--text);}
+.channel-row .status{font-size:0.63rem; margin-top:2px; letter-spacing:0.3px; color:var(--text-faint);}
+.status.on{color:var(--on);}
+.status.off{color:var(--text-faint);}
+
+/* botones ON/OFF con relieve tipo panel fisico (modo no-cors: comando a ciegas) */
+.state-btns{display:flex; gap:6px; flex-shrink:0;}
+.state-btn{width:44px; padding:8px 0; border-radius:5px; border:1px solid var(--border);
+  background:var(--inset); color:var(--text-faint); font-family:inherit; font-size:0.66rem;
+  font-weight:800; cursor:pointer; letter-spacing:0.5px;
+  box-shadow:0 1px 0 rgba(255,255,255,0.04) inset, 0 2px 3px rgba(0,0,0,0.35);
+  transition:all .12s;}
+.state-btn:active{box-shadow:0 1px 4px rgba(0,0,0,0.5) inset; transform:translateY(1px);}
+.state-btn.sending{opacity:0.4;}
+.state-btn.on-btn.active{background:var(--on-dim); border-color:var(--on); color:var(--on);
+  box-shadow:0 0 10px var(--on-glow), 0 1px 4px rgba(0,0,0,0.5) inset;}
+.state-btn.off-btn.active{background:var(--panel2); border-color:var(--border-lit); color:var(--text);}
+
+.empty{color:var(--text-faint); text-align:center; margin-top:60px; font-size:0.82rem; line-height:1.7;
+  grid-column:1/-1;}
 
 /* add form */
 #fab{position:fixed; right:18px; bottom:24px; width:56px; height:56px; border-radius:50%;
-  background:var(--on); color:var(--bg); border:none; font-size:1.6rem; font-weight:700;
-  cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,0.4); z-index:20;}
+  background:var(--on); color:var(--bg); border:none; font-size:1.6rem; font-weight:800;
+  cursor:pointer; box-shadow:0 4px 16px var(--on-glow); z-index:20;}
 
-#overlay{position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:30; display:none;
+#overlay{position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:30; display:none;
   align-items:flex-end;}
-#sheet{background:var(--surface); width:100%; border-radius:16px 16px 0 0; padding:20px;
-  border-top:1px solid var(--border);}
-#sheet h3{margin:0 0 14px; font-size:1rem; color:var(--on);}
-#sheet label{display:block; font-size:0.72rem; color:var(--text-dim); margin:12px 0 4px;}
-#sheet input{width:100%; background:var(--surface2); border:1px solid var(--border);
-  color:var(--text); padding:10px; border-radius:8px; font-family:inherit; font-size:0.9rem;}
+#sheet{background:var(--panel); width:100%; border-radius:16px 16px 0 0; padding:20px;
+  border-top:1px solid var(--border); max-height:88vh; overflow-y:auto;}
+#sheet h3{margin:0 0 14px; font-size:0.9rem; color:var(--on); text-transform:uppercase; letter-spacing:1px;}
+#sheet label{display:block; font-size:0.66rem; color:var(--text-faint); margin:12px 0 4px;
+  text-transform:uppercase; letter-spacing:0.5px;}
+#sheet input{width:100%; background:var(--inset); border:1px solid var(--border);
+  color:var(--text); padding:10px; border-radius:6px; font-family:inherit; font-size:0.88rem;}
 #sheet .row{display:flex; gap:10px; margin-top:20px;}
 #channelNamesContainer label{margin-top:10px;}
 #channelNamesContainer input{margin-bottom:2px;}
-#sheet button{flex:1; padding:12px; border-radius:8px; border:none; font-family:inherit;
-  font-weight:700; font-size:0.85rem; cursor:pointer;}
+#sheet button{flex:1; padding:12px; border-radius:6px; border:none; font-family:inherit;
+  font-weight:700; font-size:0.8rem; cursor:pointer; text-transform:uppercase; letter-spacing:0.5px;}
 #saveDevice{background:var(--on); color:var(--bg);}
-#cancelDevice{background:var(--surface2); color:var(--text-dim); border:1px solid var(--border) !important;}
+#cancelDevice{background:var(--panel2); color:var(--text-dim); border:1px solid var(--border) !important;}
 #deleteDevice{background:none; color:var(--danger); border:1px solid var(--danger) !important;
   display:none; margin-top:10px; width:100%;}
 
 .toast{position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
-  background:var(--surface2); border:1px solid var(--border); color:var(--text);
-  padding:10px 18px; border-radius:20px; font-size:0.78rem; z-index:50; opacity:0;
+  background:var(--panel2); border:1px solid var(--border-lit); color:var(--text);
+  padding:10px 18px; border-radius:20px; font-size:0.76rem; z-index:50; opacity:0;
   transition:opacity .2s; pointer-events:none;}
 .toast.show{opacity:1;}
 </style>
@@ -127,11 +176,16 @@ main{flex:1; padding:14px 14px 100px; display:flex; flex-direction:column; gap:1
 <div id="app">
   <header class="top">
     <div>
-      <h2>Tasmota Control</h2>
+      <h2>Tasmota <span class="amber">Control</span></h2>
       <div class="sub" id="deviceCount">0 dispositivos</div>
     </div>
     <button id="salirBtn">🚪 Salir</button>
   </header>
+
+  <div id="systemBar">
+    <span class="dot" id="sysDot"></span>
+    <span id="sysText">verificando red...</span>
+  </div>
 
   <main>
     <div id="list"></div>
