@@ -58,16 +58,19 @@ main{flex:1; padding:14px 14px 100px; display:flex; flex-direction:column; gap:1
 .status.on{color:var(--on);}
 .status.off{color:var(--text-dim);}
 .status.err{color:var(--danger);}
+.device .reach{font-size:0.62rem; margin-top:2px;}
+.reach.ok{color:#5a9d6b;}
+.reach.bad{color:var(--danger);}
+.reach.unknown{color:var(--text-dim);}
 
-/* relay-style rocker switch */
-.rocker{position:relative; width:52px; height:30px; border-radius:6px;
-  background:var(--off); border:1px solid var(--border); flex-shrink:0; cursor:pointer;
-  transition:background .15s;}
-.rocker.on{background:var(--on-dim); border-color:var(--on);}
-.rocker .bar{position:absolute; top:3px; bottom:3px; width:22px; border-radius:4px;
-  background:var(--text-dim); left:3px; transition:left .15s, background .15s;}
-.rocker.on .bar{left:27px; background:var(--on);}
-.rocker.loading .bar{opacity:0.4;}
+/* botones ON/OFF explicitos (modo no-cors: comando disparado a ciegas, sin leer respuesta) */
+.state-btns{display:flex; flex-direction:column; gap:4px; flex-shrink:0;}
+.state-btn{width:56px; padding:7px 0; border-radius:6px; border:1px solid var(--border);
+  background:var(--surface2); color:var(--text-dim); font-family:inherit; font-size:0.72rem;
+  font-weight:700; cursor:pointer; letter-spacing:0.5px; transition:background .15s, color .15s, border-color .15s;}
+.state-btn.sending{opacity:0.5;}
+.state-btn.on-btn.active{background:var(--on-dim); border-color:var(--on); color:var(--on);}
+.state-btn.off-btn.active{background:var(--surface2); border-color:var(--text-dim); color:var(--text);}
 
 .device .menuBtn{background:none;border:none;color:var(--text-dim);font-size:1.1rem;
   cursor:pointer; padding:4px 6px;}
