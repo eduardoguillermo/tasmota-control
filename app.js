@@ -1,4 +1,4 @@
-const APP_VERSION = "1.3.0";
+const APP_VERSION = "1.3.1";
 const STORAGE_KEY = "tasmota_devices";
 const BACKUPS_KEY = "tasmota_backups";
 const MAX_BACKUPS = 10;
